@@ -1,6 +1,6 @@
 {
   "name": "78code-ai",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Quick AI CLI configuration tool - configure API keys for Claude Code, Codex, Gemini CLI, OpenCode & OpenClaw",
   "type": "module",
   "bin": {

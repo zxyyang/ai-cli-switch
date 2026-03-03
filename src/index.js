@@ -1,4 +1,4 @@
-import { select, password } from '@inquirer/prompts';
+import { select, password, input } from '@inquirer/prompts';
 import chalk from 'chalk';
 import ora from 'ora';
 import os from 'os';
@@ -46,7 +46,7 @@ function showBanner() {
   console.log(chalk.cyan.bold('    / / /_/ / /__/ /_/ / /_/ /  __/       '));
   console.log(chalk.cyan.bold('   /_/\\____/\\___/\\____/\\__,_/\\___/  '));
   console.log('');
-  console.log(chalk.bold.white('   AI CLI 一键配置工具') + chalk.gray(' v1.0.1'));
+  console.log(chalk.bold.white('   AI CLI 一键配置工具') + chalk.gray(' v1.0.2'));
   console.log(chalk.gray('   快速配置 Claude Code / Codex / Gemini / OpenCode / OpenClaw'));
   console.log(line);
   console.log('');
@@ -229,9 +229,40 @@ function showCompletion() {
   console.log('');
 }
 
+// ==================== 代理设置 ====================
+async function setupProxy() {
+  const useProxy = await confirmSelect('是否需要设置网络代理？', false);
+  if (!useProxy) return;
+
+  console.log('');
+  const proxyUrl = await input({
+    message: '代理地址',
+    validate: (v) => {
+      if (!v) return '代理地址不能为空';
+      if (!/^https?:\/\/.+/.test(v)) return '请输入有效的代理地址，如 http://127.0.0.1:7890';
+      return true;
+    },
+  });
+
+  try {
+    const { ProxyAgent, setGlobalDispatcher } = await import('undici');
+    setGlobalDispatcher(new ProxyAgent(proxyUrl));
+    console.log(chalk.green(`  代理已设置: ${proxyUrl}`));
+  } catch {
+    // undici 不可用时回退到环境变量
+    process.env.HTTP_PROXY = proxyUrl;
+    process.env.HTTPS_PROXY = proxyUrl;
+    console.log(chalk.green(`  代理已设置 (env): ${proxyUrl}`));
+  }
+  console.log('');
+}
+
 // ==================== 主流程 ====================
 export async function main() {
   showBanner();
+
+  // 0. 代理设置
+  await setupProxy();
 
   // 1. 环境检测
   const installed = await detectEnvironment();
