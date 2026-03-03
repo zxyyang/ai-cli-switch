@@ -117,8 +117,8 @@ requires_openai_auth = true
         headers: { Authorization: `Bearer ${apiKey}` },
         signal: AbortSignal.timeout(15000),
       });
-      if (res.status === 401 || res.status === 403) {
-        return { ok: false, error: `认证失败 (HTTP ${res.status})` };
+      if (res.status === 401) {
+        return { ok: false, error: `认证失败 (HTTP 401)` };
       }
       return { ok: true };
     } catch (err) {

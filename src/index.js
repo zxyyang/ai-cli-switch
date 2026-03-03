@@ -46,7 +46,7 @@ function showBanner() {
   console.log(chalk.cyan.bold('    / / /_/ / /__/ /_/ / /_/ /  __/       '));
   console.log(chalk.cyan.bold('   /_/\\____/\\___/\\____/\\__,_/\\___/  '));
   console.log('');
-  console.log(chalk.bold.white('   AI CLI 一键配置工具') + chalk.gray(' v1.0.0'));
+  console.log(chalk.bold.white('   AI CLI 一键配置工具') + chalk.gray(' v1.0.1'));
   console.log(chalk.gray('   快速配置 Claude Code / Codex / Gemini / OpenCode / OpenClaw'));
   console.log(line);
   console.log('');

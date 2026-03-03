@@ -76,8 +76,8 @@ export const gemini = {
       : `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`;
     try {
       const res = await fetch(url, { signal: AbortSignal.timeout(15000) });
-      if (res.status === 401 || res.status === 403 || res.status === 400) {
-        return { ok: false, error: `认证失败 (HTTP ${res.status})` };
+      if (res.status === 401) {
+        return { ok: false, error: `认证失败 (HTTP 401)` };
       }
       return { ok: true };
     } catch (err) {

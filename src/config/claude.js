@@ -69,9 +69,9 @@ export const claude = {
         }),
         signal: AbortSignal.timeout(15000),
       });
-      // 200 或 400(参数问题) 都说明密钥有效, 401/403 说明密钥无效
-      if (res.status === 401 || res.status === 403) {
-        return { ok: false, error: `认证失败 (HTTP ${res.status})` };
+      // 200/400/403 等都说明连接正常, 仅 401 说明密钥无效
+      if (res.status === 401) {
+        return { ok: false, error: `认证失败 (HTTP 401)` };
       }
       return { ok: true };
     } catch (err) {
