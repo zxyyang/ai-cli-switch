@@ -22,8 +22,8 @@
 [🇨🇳 中文](README.md) · [🇺🇸 English](README.en.md) · [🇰🇷 한국어](README.ko.md) · [🇮🇳 हिन्दी](README.hi.md)
 
 </div>
+
 <img src="assets/demo.png" alt="ai-cli-switch demo" width="720" />
----
 
 ## ✨ 为什么选择 ai-cli-switch？
 
