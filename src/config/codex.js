@@ -5,7 +5,19 @@ const CONFIG_DIR = path.join(HOME, '.codex');
 const AUTH_PATH = path.join(CONFIG_DIR, 'auth.json');
 const CONFIG_TOML_PATH = path.join(CONFIG_DIR, 'config.toml');
 
-const PROVIDER_ID = '78code';
+/**
+ * 从 Base URL 提取可用作 provider ID 的短名称
+ * 例：https://api.openai.com/v1 → openai-com
+ *     http://127.0.0.1:8080    → localhost
+ */
+function providerIdFromUrl(url) {
+  try {
+    const { hostname } = new URL(url);
+    return hostname.replace(/\./g, '-').replace(/^www-/, '');
+  } catch {
+    return 'custom';
+  }
+}
 
 /**
  * 在 TOML 内容中设置或替换顶层 key = "value"
@@ -76,7 +88,7 @@ export const codex = {
   },
 
   async configure({ apiKey, baseUrl }) {
-    // 1. 写入 auth.json（与 cc-switch 一致：只写 OPENAI_API_KEY）
+    // 1. 写入 auth.json（只写 OPENAI_API_KEY）
     const backupPath = backupFile(AUTH_PATH);
     writeJsonFile(AUTH_PATH, {
       OPENAI_API_KEY: apiKey,
@@ -84,20 +96,21 @@ export const codex = {
 
     // 2. 更新 config.toml（保留用户的 mcp_servers、projects 等）
     if (baseUrl) {
+      const providerId = providerIdFromUrl(baseUrl);
       backupFile(CONFIG_TOML_PATH);
       let toml = readTextFile(CONFIG_TOML_PATH) || '';
 
-      // 设置顶层 key（与 cc-switch generateThirdPartyConfig 一致）
-      toml = setTomlTopLevelKey(toml, 'model_provider', PROVIDER_ID);
+      // 设置顶层 key
+      toml = setTomlTopLevelKey(toml, 'model_provider', providerId);
       toml = setTomlTopLevelKey(toml, 'disable_response_storage', 'true');
 
-      // 移除旧的 [model_providers.78code] section（如果存在）
-      toml = removeTomlSection(toml, `model_providers.${PROVIDER_ID}`);
+      // 移除旧的同名 section（如果存在）
+      toml = removeTomlSection(toml, `model_providers.${providerId}`);
 
       // 追加新的 provider section
       const providerSection = `
-[model_providers.${PROVIDER_ID}]
-name = "${PROVIDER_ID}"
+[model_providers.${providerId}]
+name = "${providerId}"
 base_url = "${baseUrl}"
 wire_api = "responses"
 requires_openai_auth = true

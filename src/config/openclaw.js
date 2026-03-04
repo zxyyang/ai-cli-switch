@@ -4,30 +4,42 @@ import { HOME, readJsonFile, writeJsonFile, backupFile, deepMerge, commandExists
 const CONFIG_DIR = path.join(HOME, '.openclaw');
 const CONFIG_PATH = path.join(CONFIG_DIR, 'openclaw.json');
 
-// 模型提供商预设
+// 模型提供商预设（provider ID 在运行时根据 baseUrl 动态生成）
 const PROVIDER_PRESETS = {
   claude: {
-    providerId: '78code-claude',
+    providerSuffix: 'claude',
     api: 'anthropic-messages',
     model: { id: 'claude-sonnet-4-6', name: 'Claude Sonnet 4.6' },
     contextWindow: 200000,
     maxTokens: 65536,
   },
   openai: {
-    providerId: '78code-openai',
+    providerSuffix: 'openai',
     api: 'openai-completions',
     model: { id: 'gpt-4o', name: 'GPT-4o' },
     contextWindow: 128000,
     maxTokens: 16384,
   },
   gemini: {
-    providerId: '78code-gemini',
+    providerSuffix: 'gemini',
     api: 'openai-completions',
     model: { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro' },
     contextWindow: 1000000,
     maxTokens: 65536,
   },
 };
+
+/**
+ * 从 Base URL 提取 provider ID 前缀
+ */
+function hostFromUrl(url) {
+  try {
+    const { hostname } = new URL(url);
+    return hostname.replace(/\./g, '-').replace(/^www-/, '');
+  } catch {
+    return 'custom';
+  }
+}
 
 export const openclaw = {
   id: 'openclaw',
@@ -60,10 +72,12 @@ export const openclaw = {
     const backupPath = backupFile(CONFIG_PATH);
 
     const preset = PROVIDER_PRESETS[modelChoice];
-    const modelRef = `${preset.providerId}/${preset.model.id}`;
+    const host = hostFromUrl(baseUrl);
+    const providerId = `${host}-${preset.providerSuffix}`;
+    const modelRef = `${providerId}/${preset.model.id}`;
 
     const providerConfig = {
-      [preset.providerId]: {
+      [providerId]: {
         baseUrl: baseUrl,
         apiKey: apiKey,
         api: preset.api,

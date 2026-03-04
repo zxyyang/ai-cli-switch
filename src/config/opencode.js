@@ -4,36 +4,48 @@ import { HOME, readJsonFile, writeJsonFile, backupFile, deepMerge, commandExists
 const CONFIG_DIR = path.join(HOME, '.config', 'opencode');
 const CONFIG_PATH = path.join(CONFIG_DIR, 'opencode.json');
 
-// 模型提供商预设
+// 模型提供商预设（provider ID 在运行时根据 baseUrl 动态生成）
 const PROVIDER_PRESETS = {
   claude: {
-    providerId: '78code-claude',
+    providerSuffix: 'claude',
     npm: '@ai-sdk/anthropic',
-    name: '78code Claude',
+    namePrefix: 'Custom Claude',
     model: 'claude-sonnet-4-6',
     modelName: 'Claude Sonnet 4.6',
     contextWindow: 200000,
     maxTokens: 65536,
   },
   openai: {
-    providerId: '78code-openai',
+    providerSuffix: 'openai',
     npm: '@ai-sdk/openai-compatible',
-    name: '78code OpenAI',
+    namePrefix: 'Custom OpenAI',
     model: 'gpt-4o',
     modelName: 'GPT-4o',
     contextWindow: 128000,
     maxTokens: 16384,
   },
   gemini: {
-    providerId: '78code-gemini',
+    providerSuffix: 'gemini',
     npm: '@ai-sdk/openai-compatible',
-    name: '78code Gemini',
+    namePrefix: 'Custom Gemini',
     model: 'gemini-2.5-pro',
     modelName: 'Gemini 2.5 Pro',
     contextWindow: 1000000,
     maxTokens: 65536,
   },
 };
+
+/**
+ * 从 Base URL 提取 provider ID 前缀
+ */
+function hostFromUrl(url) {
+  try {
+    const { hostname } = new URL(url);
+    return hostname.replace(/\./g, '-').replace(/^www-/, '');
+  } catch {
+    return 'custom';
+  }
+}
 
 export const opencode = {
   id: 'opencode',
@@ -66,10 +78,14 @@ export const opencode = {
     const backupPath = backupFile(CONFIG_PATH);
 
     const preset = PROVIDER_PRESETS[modelChoice];
+    const host = hostFromUrl(baseUrl);
+    const providerId = `${host}-${preset.providerSuffix}`;
+    const providerName = `${preset.namePrefix} (${host})`;
+
     const providerConfig = {
-      [preset.providerId]: {
+      [providerId]: {
         npm: preset.npm,
-        name: preset.name,
+        name: providerName,
         options: {
           baseURL: baseUrl,
           apiKey: apiKey,
@@ -88,7 +104,7 @@ export const opencode = {
 
     const update = {
       provider: providerConfig,
-      model: `${preset.providerId}/${preset.model}`,
+      model: `${providerId}/${preset.model}`,
     };
 
     const merged = deepMerge(existing, update);

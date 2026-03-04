@@ -5,21 +5,18 @@ import os from 'os';
 import { toolList } from './config/index.js';
 import { IS_WIN, getPlatformName } from './utils.js';
 
-// ==================== 配置变量 ====================
-const MODEL_BASE_URLS = {
-  claude: 'https://www.78code.cc',
-  openai: 'https://www.78code.cc/v1',
-  gemini: 'https://www.78code.cc',
+// ==================== 默认官方 Base URL ====================
+const DEFAULT_BASE_URLS = {
+  claude: 'https://api.anthropic.com',
+  openai: 'https://api.openai.com/v1',
+  gemini: 'https://generativelanguage.googleapis.com',
 };
 
-const TOOL_BASE_URLS = {
-  claude:  MODEL_BASE_URLS.claude,
-  codex:   MODEL_BASE_URLS.openai,
-  gemini:  MODEL_BASE_URLS.gemini,
+const DEFAULT_TOOL_BASE_URLS = {
+  claude:  DEFAULT_BASE_URLS.claude,
+  codex:   DEFAULT_BASE_URLS.openai,
+  gemini:  DEFAULT_BASE_URLS.gemini,
 };
-
-const SITE_URL = 'https://www.78code.cc';
-const QQ_GROUP = '1081535932';
 
 // ==================== 是/否选择（上下箭头） ====================
 async function confirmSelect(message, defaultYes = true) {
@@ -40,14 +37,16 @@ function showBanner() {
   const line = chalk.gray('  ─────────────────────────────────────────');
   console.log('');
   console.log(line);
-  console.log(chalk.cyan.bold('    _________                 __           '));
-  console.log(chalk.cyan.bold('   /__  ( __ )_________  ____/ /__         '));
-  console.log(chalk.cyan.bold('     / / __  / ___/ __ \\/ __  / _ \\   '));
-  console.log(chalk.cyan.bold('    / / /_/ / /__/ /_/ / /_/ /  __/       '));
-  console.log(chalk.cyan.bold('   /_/\\____/\\___/\\____/\\__,_/\\___/  '));
+  console.log(chalk.cyan.bold('    ___    ____   ________    ____           '));
+  console.log(chalk.cyan.bold('   /   |  /  _/  / ____/ /   / __/___ _      '));
+  console.log(chalk.cyan.bold('  / /| |  / /   / /   / /   / /_/ __ `/      '));
+  console.log(chalk.cyan.bold(' / ___ |_/ /   / /___/ /___/ __/ /_/ /       '));
+  console.log(chalk.cyan.bold('/_/  |_/___/   \\____/_____/_/  \\__, /    '));
+  console.log(chalk.cyan.bold('                               /____/         '));
   console.log('');
-  console.log(chalk.bold.white('   AI CLI 一键配置工具') + chalk.gray(' v1.0.2'));
+  console.log(chalk.bold.white('   AI CLI Config') + chalk.gray(' v1.0.0'));
   console.log(chalk.gray('   快速配置 Claude Code / Codex / Gemini / OpenCode / OpenClaw'));
+  console.log(chalk.gray('   支持自定义 Base URL，兼容任意 API 中转服务'));
   console.log(line);
   console.log('');
 }
@@ -113,12 +112,12 @@ function trimTrailingSlash(url) {
   return url ? url.replace(/\/+$/, '') : url;
 }
 
-// ==================== 获取 Base URL ====================
-function getBaseUrl(tool, modelChoice) {
+// ==================== 获取默认 Base URL ====================
+function getDefaultBaseUrl(tool, modelChoice) {
   if (tool.needsModelChoice && modelChoice) {
-    return trimTrailingSlash(MODEL_BASE_URLS[modelChoice]);
+    return DEFAULT_BASE_URLS[modelChoice] || DEFAULT_BASE_URLS.openai;
   }
-  return trimTrailingSlash(TOOL_BASE_URLS[tool.id]);
+  return DEFAULT_TOOL_BASE_URLS[tool.id] || '';
 }
 
 // ==================== 配置单个工具 ====================
@@ -138,7 +137,19 @@ async function configureOneTool(installed) {
     });
   }
 
-  const baseUrl = getBaseUrl(tool, modelChoice);
+  // 输入 Base URL（可修改默认值）
+  console.log('');
+  const defaultUrl = getDefaultBaseUrl(tool, modelChoice);
+  const rawBaseUrl = await input({
+    message: 'Base URL（留空使用官方地址，或填入你的中转地址）',
+    default: defaultUrl,
+    validate: (v) => {
+      if (!v) return true; // 允许空（后续使用默认）
+      if (!/^https?:\/\/.+/.test(v)) return '请输入有效的 URL，如 https://api.anthropic.com';
+      return true;
+    },
+  });
+  const baseUrl = trimTrailingSlash(rawBaseUrl || defaultUrl);
 
   console.log('');
   console.log(chalk.bold(`  ┌ 配置 ${tool.name}`));
@@ -220,10 +231,7 @@ function showCompletion() {
   console.log('');
   console.log(chalk.green.bold('   ✅ 全部配置完成！'));
   console.log('');
-  console.log(`   🌐 官网  ${chalk.cyan.underline(SITE_URL)}`);
-  console.log(`   💬 QQ群  ${chalk.cyan(QQ_GROUP)}`);
-  console.log('');
-  console.log(chalk.gray('   感谢使用 78code，祝你编程愉快！'));
+  console.log(chalk.gray('   你的 AI CLI 工具已配置完毕，尽情享用吧！'));
   console.log('');
   console.log(line);
   console.log('');
