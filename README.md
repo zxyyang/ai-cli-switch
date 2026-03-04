@@ -5,7 +5,6 @@
 <p><strong>一条命令，完成所有 AI CLI 工具的 API 配置</strong></p>
 <p>Configure Claude Code · Codex · Gemini CLI · OpenCode · OpenClaw in seconds</p>
 <p>支持任意 Base URL — 官方 API / 中转服务 / 自建代理</p>
-<img src="assets/demo.png" alt="ai-cli-switch demo" width="720" />
 
 <br/>
 
@@ -23,7 +22,7 @@
 [🇨🇳 中文](README.md) · [🇺🇸 English](README.en.md) · [🇰🇷 한국어](README.ko.md) · [🇮🇳 हिन्दी](README.hi.md)
 
 </div>
-
+<img src="assets/demo.png" alt="ai-cli-switch demo" width="720" />
 ---
 
 ## ✨ 为什么选择 ai-cli-switch？
