@@ -1,10 +1,10 @@
 {
-  "name": "ai-cli-config",
+  "name": "ai-cli-switch",
   "version": "1.0.0",
   "description": "One-command configuration tool for AI CLI tools — Claude Code, Codex, Gemini CLI, OpenCode & OpenClaw. Bring your own Base URL.",
   "type": "module",
   "bin": {
-    "aicfg": "bin/index.js"
+    "ai-cli-switch": "bin/index.js"
   },
   "files": [
     "bin",

@@ -1,27 +1,87 @@
-# AI CLI Config
+# ai-cli-switch
 
-> One-command tool to configure Claude Code, Codex, Gemini CLI, OpenCode, and OpenClaw
-> 支持任意 Base URL — 官方 API 或自建中转服务均可
+> 一条命令配置所有 AI CLI 工具 — Claude Code · Codex · Gemini CLI · OpenCode · OpenClaw
+> Supports any Base URL: official APIs, self-hosted proxies, or third-party relay services.
 
-[![npm version](https://img.shields.io/npm/v/ai-cli-config)](https://www.npmjs.com/package/ai-cli-config)
+[![npm version](https://img.shields.io/npm/v/ai-cli-switch)](https://www.npmjs.com/package/ai-cli-switch)
+[![npm downloads](https://img.shields.io/npm/dm/ai-cli-switch)](https://www.npmjs.com/package/ai-cli-switch)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---
 
-## 简介 / Overview
+## Demo
 
-`ai-cli-config` 是一个通用的 AI CLI 配置助手。无论你使用的是：
+```
+$ npx ai-cli-switch
 
-- **官方 API**（api.anthropic.com / api.openai.com）
-- **第三方中转服务**（如 78code.cc 等）
-- **自建 API 代理**（本地或云端）
+  ─────────────────────────────────────────
+    ___    ____   ________    ____
+   /   |  /  _/  / ____/ /   / __/___ _
+  / /| |  / /   / /   / /   / /_/ __ `/
+ / ___ |_/ /   / /___/ /___/ __/ /_/ /
+/_/  |_/___/   \____/_____/_/  \__, /
+                               /____/
 
-只需运行一条命令，交互式填写 Base URL 和 API Key，即可自动完成配置。
+   AI CLI Config v1.0.0
+   快速配置 Claude Code / Codex / Gemini / OpenCode / OpenClaw
+   支持自定义 Base URL，兼容任意 API 中转服务
+  ─────────────────────────────────────────
+
+? 是否需要设置网络代理？  否
+⠋ 正在检测环境...
+✔ 环境检测完成
+
+  平台        macOS (arm64)
+  Node.js     v22.0.0
+  Shell       /bin/zsh
+  用户目录     /Users/yourname
+
+  检测到 2 个已安装工具:
+
+    ● Claude Code
+    ● Gemini CLI
+
+? 选择要配置的工具   Claude Code
+? Base URL（留空使用官方地址，或填入你的中转地址）
+  https://api.anthropic.com        ← 默认官方，直接改成中转地址即可
+
+? API Key  ********
+
+⠋ 正在测试 API 连接...
+✔ API 连接测试通过
+✔ 配置写入成功
+    配置文件: /Users/yourname/.claude/settings.json
+    备份文件: /Users/yourname/.claude/settings.json.bak.1709123456789
+✔ 自检通过，一切正常
+  └ 完成
+
+? 是否继续配置其他工具？  否
+
+  ─────────────────────────────────────────
+
+   ✅ 全部配置完成！
+
+   你的 AI CLI 工具已配置完毕，尽情享用吧！
+
+  ─────────────────────────────────────────
+```
 
 ---
 
-## 支持的工具 / Supported Tools
+## 简介
+
+`ai-cli-switch` 是一个通用的 AI CLI 配置助手，支持：
+
+- **官方 API** — `api.anthropic.com` / `api.openai.com` / `generativelanguage.googleapis.com`
+- **第三方中转服务** — 如 78code.cc、openrouter 等
+- **自建 API 代理** — 本地或云端任意地址
+
+无需手动编辑配置文件，交互式填写 Base URL 和 API Key 即可完成。
+
+---
+
+## 支持的工具
 
 | 工具 | 说明 | 默认 Base URL |
 |------|------|---------------|
@@ -33,48 +93,19 @@
 
 ---
 
-## 快速开始 / Quick Start
+## 快速开始
 
 ### 无需安装，直接运行
 
 ```bash
-npx ai-cli-config
+npx ai-cli-switch
 ```
 
 ### 全局安装
 
 ```bash
-npm install -g ai-cli-config
-aicfg
-```
-
----
-
-## 使用流程 / Usage Flow
-
-```
-aicfg
-  │
-  ├─ [可选] 设置网络代理
-  │
-  ├─ 自动检测已安装的 AI CLI 工具
-  │
-  ├─ 选择要配置的工具
-  │       Claude Code / Codex / Gemini CLI / OpenCode / OpenClaw
-  │
-  ├─ [OpenCode/OpenClaw] 选择模型类型
-  │       Claude (Anthropic) / OpenAI (GPT) / Gemini (Google)
-  │
-  ├─ 输入 Base URL
-  │       默认为官方地址，可直接修改为你的中转服务地址
-  │
-  ├─ 输入 API Key（密码模式，不显示明文）
-  │
-  ├─ 自动测试 API 连接
-  │
-  ├─ 写入配置文件（自动备份原配置）
-  │
-  └─ 自检确认配置生效 ✅
+npm install -g ai-cli-switch
+ai-cli-switch
 ```
 
 ---
@@ -88,8 +119,8 @@ aicfg
 | Gemini 官方 | `https://generativelanguage.googleapis.com` |
 | 78code 中转（Claude） | `https://www.78code.cc` |
 | 78code 中转（OpenAI） | `https://www.78code.cc/v1` |
-| 自建代理（示例） | `http://127.0.0.1:8080` |
-| 云端代理（示例） | `https://your-proxy.example.com` |
+| 自建代理（本地） | `http://127.0.0.1:8080` |
+| 云端代理 | `https://your-proxy.example.com` |
 
 ---
 
@@ -111,7 +142,7 @@ aicfg
 ### Codex (OpenAI)
 
 - `~/.codex/auth.json` → `{ "OPENAI_API_KEY": "..." }`
-- `~/.codex/config.toml` → 添加自定义 provider 段落（provider ID 根据 Base URL 自动生成）
+- `~/.codex/config.toml` → 添加自定义 provider 段落（provider ID 根据 Base URL hostname 自动生成）
 
 ### Gemini CLI
 
@@ -124,7 +155,7 @@ GOOGLE_GEMINI_BASE_URL=<your-base-url>
 
 ### OpenCode
 
-写入 `~/.config/opencode/opencode.json`，provider ID 格式为 `{hostname}-{model-type}`（如 `api-openai-com-claude`）。
+写入 `~/.config/opencode/opencode.json`，provider ID 格式为 `{hostname}-{model-type}`。
 
 ### OpenClaw
 
@@ -159,7 +190,7 @@ npm install -g @anthropic-ai/claude-code
 
 **Q: 提示"未检测到任何已安装的 AI CLI 工具"？**
 
-请先安装对应工具，例如：
+请先安装对应工具：
 
 ```bash
 npm install -g @anthropic-ai/claude-code   # Claude Code
@@ -167,15 +198,11 @@ npm install -g @openai/codex               # Codex
 npm install -g @google/gemini-cli          # Gemini CLI
 ```
 
----
-
 **Q: API 连接测试失败？**
 
 - 检查 Base URL 是否正确（末尾不要加 `/`）
 - 检查 API Key 是否有效
-- 如在国内，可能需要设置代理（工具启动时会询问）
-
----
+- 国内网络可在启动时选择设置代理
 
 **Q: 如何手动验证 Claude Code 配置？**
 
@@ -188,12 +215,12 @@ cat ~/.claude/settings.json
 ## 项目结构
 
 ```
-ai-cli-config/
+ai-cli-switch/
 ├── bin/
 │   └── index.js          # CLI 入口
 ├── src/
 │   ├── index.js          # 主流程（交互逻辑）
-│   ├── utils.js          # 工具函数（文件读写、连接测试等）
+│   ├── utils.js          # 工具函数
 │   └── config/
 │       ├── claude.js     # Claude Code 配置模块
 │       ├── codex.js      # Codex 配置模块
@@ -205,23 +232,16 @@ ai-cli-config/
 
 ---
 
-## 二次开发 / Fork for Your Own Proxy
+## Fork 为自己的专属版
 
-如果你运营自己的 API 中转服务，可以 fork 本仓库并：
+如果你运营自己的 API 中转服务，可以 fork 本仓库：
 
-1. 在 `src/index.js` 中修改 `DEFAULT_BASE_URLS` 为你自己的服务地址
+1. 修改 `src/index.js` 中 `DEFAULT_BASE_URLS` 为你的服务地址
 2. 修改 `package.json` 中的 `name` 和 `bin` 字段
 3. 更新 banner 和完成页面中的品牌信息
 4. 发布到 npm，用户即可一键使用你的专属配置工具
 
----
-
-## 分支说明
-
-| 分支 | 说明 |
-|------|------|
-| `main` | 通用版本，支持手动输入任意 Base URL |
-| `78code-edition` | 78code.cc 专属版，Base URL 已预设，开箱即用 |
+示例：[78code-ai](https://github.com/zxyyang/78code) — 基于本工具的 78code.cc 专属版
 
 ---
 
